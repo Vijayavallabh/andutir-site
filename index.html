@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Andutir builds open, reproducible AI infrastructure for phage-host prediction research.">
+  <title>Andutir | PhageHost-Bench</title>
+
+  <style>
+    :root {
+      --navy: #071525;
+      --navy-2: #0c2037;
+      --card: #102b46;
+      --text: #f1f7ff;
+      --muted: #b7c8dc;
+      --accent: #55dfc2;
+      --accent-dark: #123d3a;
+      --line: rgba(255,255,255,.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--navy);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: auto;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(7, 21, 37, .94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-inner {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      color: var(--text);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: .04em;
+    }
+
+    .brand span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      font-size: .93rem;
+    }
+
+    .nav-links a { color: var(--muted); }
+
+    header {
+      padding: 104px 0 72px;
+      background:
+        radial-gradient(circle at 85% 12%, rgba(85,223,194,.18), transparent 30%),
+        linear-gradient(135deg, var(--navy), var(--navy-2));
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: var(--accent);
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-size: .82rem;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.16;
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin-bottom: 22px;
+      font-size: clamp(2.7rem, 6vw, 5.3rem);
+      letter-spacing: -.045em;
+    }
+
+    .lead {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: clamp(1.1rem, 2vw, 1.32rem);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 32px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 18px;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .button.primary {
+      color: #05201c;
+      background: var(--accent);
+    }
+
+    .button.secondary { color: var(--accent); }
+
+    section { padding: 76px 0; }
+
+    section.alt { background: #091a2d; }
+
+    .section-intro {
+      max-width: 770px;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    h2 {
+      margin-bottom: 14px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -.025em;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 32px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, 1fr); }
+
+    .card {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--card);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    .card p, .card li { color: var(--muted); }
+
+    ul {
+      padding-left: 20px;
+      margin-bottom: 0;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .metric {
+      padding: 20px;
+      border-radius: 14px;
+      background: var(--accent-dark);
+      border: 1px solid rgba(85,223,194,.3);
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--accent);
+      font-size: 1.6rem;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .timeline {
+      border-left: 2px solid var(--accent);
+      margin-top: 30px;
+      padding-left: 25px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 0 0 28px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      left: -32px;
+      top: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .timeline-item h3 { margin-bottom: 4px; }
+
+    .timeline-item p { margin: 0; color: var(--muted); }
+
+    footer {
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .93rem;
+    }
+
+    @media (max-width: 800px) {
+      .nav-links { display: none; }
+      .grid, .grid.two, .metrics { grid-template-columns: 1fr; }
+      header { padding-top: 76px; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a class="brand" href="#top">ANDU<span>TIR</span></a>
+      <div class="nav-links">
+        <a href="#project">Project</a>
+        <a href="#approach">Approach</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <header>
+      <div class="container">
+        <p class="eyebrow">Open scientific infrastructure</p>
+        <h1>Better benchmarks for phage-host prediction.</h1>
+        <p class="lead">
+          Andutir is building PhageHost-Bench: a public, leakage-controlled,
+          multi-pathogen benchmark and leaderboard for AI-driven prediction of
+          bacteriophage-host interactions.
+        </p>
+        <div class="actions">
+          <a class="button primary" href="#project">Explore the project</a>
+          <a class="button secondary" href="https://github.com/Vijayavallabh">
+            View GitHub
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <section id="project">
+      <div class="container">
+        <p class="eyebrow">The challenge</p>
+        <h2>Phage AI needs a common, reliable yardstick.</h2>
+        <p class="section-intro">
+          Phage therapy depends on matching bacterial viruses to the right
+          bacterial strains. Existing AI tools are difficult to compare fairly
+          because they often use different datasets, negative-label methods,
+          and train-test splits. PhageHost-Bench is designed to make evaluation
+          more transparent, reproducible, and clinically relevant.
+        </p>
+
+        <div class="grid">
+          <article class="card">
+            <h3>Strain-aware evaluation</h3>
+            <p>
+              We focus on prediction at the bacterial-strain level, where
+              host-matching decisions matter most.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Leakage-controlled splits</h3>
+            <p>
+              Evaluation splits will account for related phages, receptor-binding
+              protein homology, and closely related bacterial hosts.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Transparent labels</h3>
+            <p>
+              Confirmed interactions, curated evidence, and sampled non-host
+              decoys will be explicitly separated rather than treated as equal.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt" id="approach">
+      <div class="container">
+        <p class="eyebrow">PhageHost-Bench</p>
+        <h2>Open data, strong baselines, and reproducible evaluation.</h2>
+        <p class="section-intro">
+          The project will release a curated dataset, documented evaluation
+          splits, baseline models, embedding resources where permitted, and a
+          public leaderboard for research submissions.
+        </p>
+
+        <div class="grid two">
+          <article class="card">
+            <h3>What we will build</h3>
+            <ul>
+              <li>Curated phage-host interaction data with source traceability</li>
+              <li>Evidence tiers for positive labels and negative-label protocols</li>
+              <li>Leakage-controlled train, validation, and test splits</li>
+              <li>Open baselines using protein embeddings and sequence features</li>
+              <li>A public leaderboard with hidden test evaluation</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3>Pathogen coverage</h3>
+            <p>
+              The resource-stack target covers five clinically important
+              pathogen groups:
+            </p>
+            <ul>
+              <li>Klebsiella</li>
+              <li>Pseudomonas</li>
+              <li>Acinetobacter</li>
+              <li>Escherichia coli</li>
+              <li>Staphylococcus</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">
+            <strong>8k–12k</strong>
+            <span>Target positive phage-host pairs</span>
+          </div>
+          <div class="metric">
+            <strong>5</strong>
+            <span>Priority pathogen groups</span>
+          </div>
+          <div class="metric">
+            <strong>6–8</strong>
+            <span>Open baseline models</span>
+          </div>
+          <div class="metric">
+            <strong>12 mo.</strong>
+            <span>Planned build and release cycle</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <p class="eyebrow">Research principles</p>
+        <h2>Designed for scientific trust.</h2>
+
+        <div class="grid">
+          <article class="card">
+            <h3>Human-verified curation</h3>
+            <p>
+              AI tools may assist literature triage and structured extraction,
+              but human reviewers verify all dataset labels before release.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Calibration-aware reporting</h3>
+            <p>
+              We will report discrimination and reliability metrics, including
+              ROC-AUC, PR-AUC, MCC, expected calibration error, and Brier score.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Cross-cloud reproducibility</h3>
+            <p>
+              Reproducible pipelines and selected baseline reruns are planned
+              across Azure and AWS, with versioned artifacts and cost-aware notes.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt" id="roadmap">
+      <div class="container">
+        <p class="eyebrow">Roadmap</p>
+        <h2>From curated data to a public release.</h2>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <h3>Months 1–3: Foundation and curation</h3>
+            <p>
+              Set up cloud and reproducibility tooling; assemble a preliminary,
+              human-verified dataset with evidence tiers.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <h3>Months 4–6: Splits and embeddings</h3>
+            <p>
+              Finalize leakage audits and label protocols; generate versioned
+              protein-embedding resources and storage mirrors.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <h3>Months 7–10: Baselines and leaderboard beta</h3>
+            <p>
+              Train and calibrate baselines, publish reproducibility containers,
+              and test the leaderboard with internal and external users.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <h3>Months 11–12: Public scientific release</h3>
+            <p>
+              Release the dataset, code, documentation, leaderboard, teaching
+              materials, and a preprint describing the benchmark.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <p class="eyebrow">Get involved</p>
+        <h2>Building for an open research community.</h2>
+        <p class="section-intro">
+          Andutir welcomes researchers, students, and contributors interested
+          in computational biology, benchmark design, reproducible ML, and
+          phage-host prediction.
+        </p>
+
+        <div class="actions">
+          <a class="button primary"
+             href="https://github.com/Vijayavallabh/phagehost-bench">
+            Project repository
+          </a>
+          <a class="button secondary"
+             href="mailto:YOUR-COMPANY-EMAIL">
+            Contact Andutir
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      © 2026 Andutir. PhageHost-Bench is an open-science research initiative.
+    </div>
+  </footer>
+</body>
+</html>
