@@ -14,30 +14,24 @@
       --muted: #9db4cc;
       --accent: #5eead4;
       --accent-2: #7dd3fc;
+      --fail: #f87171;
       --line: rgba(157, 180, 204, 0.18);
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
       background: var(--navy);
       color: var(--text);
       line-height: 1.6;
+      overflow-x: hidden;
     }
     .container { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
-    h1, h2, h3 {
-      line-height: 1.16;
-      margin: 0 0 16px;
-      letter-spacing: -0.01em;
-    }
-    h1 {
-      max-width: 900px;
-      font-size: clamp(2.1rem, 4.6vw, 3.4rem);
-    }
-    h2 {
-      margin-bottom: 14px;
-      font-size: clamp(1.5rem, 3vw, 2.1rem);
-    }
+    h1, h2, h3 { line-height: 1.16; margin: 0 0 16px; letter-spacing: -0.01em; }
+    h1 { max-width: 900px; font-size: clamp(2.2rem, 5vw, 3.6rem); }
+    h2 { margin-bottom: 14px; font-size: clamp(1.5rem, 3vw, 2.1rem); }
     h3 { font-size: 1.12rem; color: var(--accent); }
     p { margin: 0 0 16px; color: var(--muted); }
     a { color: var(--accent-2); text-decoration: none; }
@@ -46,147 +40,192 @@
     nav {
       position: sticky;
       top: 0;
-      z-index: 10;
-      background: rgba(7, 22, 39, 0.92);
+      z-index: 20;
+      background: rgba(7, 22, 39, 0.9);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--line);
     }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 24px;
-    }
-    .brand {
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      color: var(--text);
-      font-size: 1.05rem;
-    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; }
+    .brand { font-weight: 800; letter-spacing: 0.14em; color: var(--text); font-size: 1.05rem; }
     .brand span { color: var(--accent); }
     .brand:hover { text-decoration: none; }
-    .nav-links a {
-      margin-left: 22px;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
+    .nav-links a { margin-left: 22px; color: var(--muted); font-size: 0.95rem; }
     .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .live {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em;
+      color: var(--accent); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px;
+    }
+    .live i {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+      animation: pulse-dot 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(94, 234, 212, 0.55); opacity: 1; }
+      50% { box-shadow: 0 0 0 6px rgba(94, 234, 212, 0); opacity: 0.6; }
+    }
 
-    header.hero { padding: 110px 0 90px; }
+    header.hero {
+      position: relative;
+      padding: 120px 0 100px;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    #sweep {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      z-index: 0; opacity: 0.9;
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: repeating-linear-gradient(0deg, rgba(241,247,255,0.022) 0 1px, transparent 1px 4px);
+    }
+    .hero .container { position: relative; z-index: 2; pointer-events: none; }
+    .hero a, .hero .telemetry { pointer-events: auto; }
+    .crosshair-v, .crosshair-h {
+      position: absolute; z-index: 1; pointer-events: none; opacity: 0;
+      background: rgba(94, 234, 212, 0.28); transition: opacity 0.25s;
+    }
+    .crosshair-v { top: 0; bottom: 0; width: 1px; }
+    .crosshair-h { left: 0; right: 0; height: 1px; }
+    .hero:hover .crosshair-v, .hero:hover .crosshair-h { opacity: 1; }
+    .xy {
+      position: absolute; z-index: 1; pointer-events: none; opacity: 0;
+      font-family: var(--mono); font-size: 0.66rem; color: var(--accent);
+      background: rgba(7, 22, 39, 0.85); border: 1px solid var(--line);
+      padding: 3px 8px; border-radius: 4px; white-space: nowrap; transition: opacity 0.25s;
+    }
+    .hero:hover .xy { opacity: 1; }
+
     .eyebrow {
-      display: inline-block;
-      font-size: 0.8rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 6px 14px;
-      margin-bottom: 26px;
+      display: inline-block; font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); border: 1px solid var(--line); border-radius: 999px;
+      padding: 6px 14px; margin-bottom: 26px; background: rgba(7,22,39,0.6);
     }
-    .lead {
-      max-width: 760px;
-      font-size: 1.18rem;
-      color: var(--muted);
+    .verb { color: var(--accent-2); display: inline-block; min-width: 4.2ch; transition: opacity 0.28s, transform 0.28s; }
+    .verb.swap { opacity: 0; transform: translateY(10px); }
+    .measure {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent));
+      background-size: 200% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shimmer 3.2s linear infinite;
     }
+    @keyframes shimmer { to { background-position: 200% 0; } }
+    .lead { max-width: 760px; font-size: 1.18rem; color: var(--muted); }
     .lead strong { color: var(--text); font-weight: 600; }
     .cta-row { margin-top: 34px; display: flex; gap: 14px; flex-wrap: wrap; }
-    .btn {
-      display: inline-block;
-      padding: 12px 22px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.98rem;
-    }
+    .btn { display: inline-block; padding: 12px 22px; border-radius: 8px; font-weight: 600; font-size: 0.98rem; }
     .btn:hover { text-decoration: none; }
-    .btn-primary { background: var(--accent); color: #06231e; }
-    .btn-ghost { border: 1px solid var(--line); color: var(--text); }
+    .btn-primary { background: var(--accent); color: #06231e; transition: transform 0.2s, box-shadow 0.2s; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(94, 234, 212, 0.35); }
+    .btn-ghost { border: 1px solid var(--line); color: var(--text); transition: border-color 0.2s, transform 0.2s; }
+    .btn-ghost:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+    .telemetry {
+      margin-top: 44px; max-width: 760px;
+      font-family: var(--mono); font-size: 0.78rem; color: var(--accent);
+      background: rgba(9, 26, 45, 0.85); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+      border-radius: 6px; padding: 12px 16px; min-height: 44px;
+    }
+    .telemetry::after { content: "▌"; animation: blink 1.1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .telemetry span { transition: opacity 0.3s; }
+
+    .ticker {
+      border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      background: var(--navy-2); overflow: hidden; white-space: nowrap; padding: 10px 0;
+    }
+    .ticker-track { display: inline-block; animation: ticker 36s linear infinite; }
+    .ticker span {
+      font-family: var(--mono); font-size: 0.74rem; color: var(--muted);
+      margin-right: 48px; letter-spacing: 0.04em;
+    }
+    .ticker b { color: var(--accent); font-weight: 600; }
+    .ticker em { color: var(--fail); font-style: normal; }
+    @keyframes ticker { to { transform: translateX(-50%); } }
 
     section { padding: 76px 0; }
     section.alt { background: #091a2d; }
-    .kicker {
-      font-size: 0.8rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent-2);
-      margin-bottom: 12px;
-    }
+    .kicker { font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 12px; }
+
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
 
     .grid { display: grid; gap: 20px; }
     .grid-3 { grid-template-columns: repeat(3, 1fr); }
-    .grid-2 { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 860px) {
-      .grid-3, .grid-2 { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 860px) { .grid-3 { grid-template-columns: 1fr; } }
     .card {
-      padding: 24px;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 12px;
+      padding: 24px; background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
     }
+    .card:hover { transform: translateY(-5px); border-color: rgba(94, 234, 212, 0.5); box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4); }
     .card p { margin-bottom: 0; font-size: 0.97rem; }
-    .ring-no {
-      font-size: 0.78rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--accent-2);
-      margin-bottom: 10px;
-    }
-    .ring-time { color: var(--accent); font-weight: 600; }
 
-    .stat {
-      font-size: clamp(1.9rem, 3.4vw, 2.6rem);
-      font-weight: 800;
-      color: var(--accent);
-      line-height: 1.1;
-    }
+    .stat { font-size: clamp(1.9rem, 3.4vw, 2.6rem); font-weight: 800; color: var(--accent); line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .stat small { font-size: 0.55em; color: var(--muted); font-weight: 700; }
     .stat-label { color: var(--muted); font-size: 0.95rem; margin-top: 8px; }
+    .finding {
+      margin-top: 22px; padding: 18px 22px; border-radius: 10px;
+      border: 1px solid rgba(94, 234, 212, 0.45); background: rgba(94, 234, 212, 0.06);
+      color: var(--text); font-size: 1.02rem;
+      animation: finding-glow 3s ease-in-out infinite;
+    }
+    @keyframes finding-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(94, 234, 212, 0.18); }
+      50% { box-shadow: 0 0 26px 0 rgba(94, 234, 212, 0.22); }
+    }
+    .finding b { color: var(--accent); }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 26px;
-      font-size: 0.97rem;
-    }
-    th, td {
-      text-align: left;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--line);
-      vertical-align: top;
-    }
-    th {
-      color: var(--accent-2);
-      font-size: 0.8rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 26px; font-size: 0.97rem; }
+    th, td { text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--accent-2); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; }
     td { color: var(--muted); }
     td:first-child { color: var(--text); font-weight: 600; }
+    tbody tr { transition: background 0.2s; }
+    tbody tr:hover { background: rgba(94, 234, 212, 0.05); }
     .verdict-kill { color: #fda4af; font-weight: 700; }
     .verdict-reshape { color: #fcd34d; font-weight: 700; }
 
+    .rings-wrap { display: flex; justify-content: center; margin: 10px 0 40px; }
+    .rings { position: relative; width: 220px; height: 220px; }
+    .rings .ring {
+      position: absolute; border-radius: 50%; border: 1px dashed rgba(125, 211, 252, 0.5);
+      animation: spin 14s linear infinite;
+    }
+    .rings .r1 { inset: 0; animation-duration: 22s; }
+    .rings .r2 { inset: 32px; animation-duration: 15s; animation-direction: reverse; border-color: rgba(94, 234, 212, 0.55); }
+    .rings .r3 { inset: 64px; animation-duration: 9s; }
+    .rings .core {
+      position: absolute; inset: 96px; border-radius: 50%; background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    .rings .core b { color: #06231e; font-size: 0.5rem; letter-spacing: 0.08em; text-align: center; font-family: var(--mono); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ring-no { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 10px; }
+    .ring-time { color: var(--accent); font-weight: 600; }
+
+    .timeline { position: relative; margin: 8px 0 34px; height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+    .timeline i {
+      position: absolute; inset: 0; width: 0; display: block;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 2.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .timeline.visible i { width: 38%; }
+
     blockquote {
-      margin: 0;
-      padding: 0 0 0 26px;
-      border-left: 3px solid var(--accent);
-      font-size: clamp(1.25rem, 2.6vw, 1.7rem);
-      line-height: 1.4;
-      color: var(--text);
-      max-width: 840px;
+      margin: 0; padding: 0 0 0 26px; border-left: 3px solid var(--accent);
+      font-size: clamp(1.25rem, 2.6vw, 1.7rem); line-height: 1.4; color: var(--text); max-width: 840px;
     }
     blockquote + p { margin-top: 18px; }
 
-    footer {
-      padding: 34px 0;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-    footer .container {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
+    footer { padding: 34px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+    footer .container { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+      .ticker-track { animation: none; }
+      html { scroll-behavior: auto; }
     }
   </style>
 </head>
@@ -200,14 +239,19 @@
         <a href="#focus">Focus</a>
         <a href="#approach">Approach</a>
         <a href="#roadmap">Roadmap</a>
+        <span class="live"><i></i>BENCH LIVE</span>
       </div>
     </div>
   </nav>
 
   <header class="hero" id="top">
+    <canvas id="sweep" aria-hidden="true"></canvas>
+    <div class="crosshair-v" id="chv"></div>
+    <div class="crosshair-h" id="chh"></div>
+    <div class="xy" id="xy">x:0000 y:0000 · measuring…</div>
     <div class="container">
       <span class="eyebrow">Aeglos Bio · PhageHost-Bench</span>
-      <h1>The measurement system for programmable biology.</h1>
+      <h1>Don't just <span class="verb" id="verb">build</span> the future.<br><span class="measure">Measure it.</span></h1>
       <p class="lead">
         Aeglos Bio is building <strong>PhageHost-Bench</strong>: a public, leakage-controlled,
         multi-pathogen benchmark and leaderboard for AI-driven phage-host prediction —
@@ -217,34 +261,52 @@
         <a class="btn btn-primary" href="#thesis">Read the thesis</a>
         <a class="btn btn-ghost" href="#roadmap">View the roadmap</a>
       </div>
+      <div class="telemetry"><span id="telemetry-line">sweep 000 :: context=RefSeq-VHDB :: candidates=285 :: resolving…</span></div>
     </div>
   </header>
 
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="ticker-track">
+      <span>sweep 041 :: tool-07 :: AUROC <b>0.91</b> :: ctx RefSeq-VHDB :: <b>PASS</b></span>
+      <span>sweep 041 :: tool-07 :: AUROC <em>0.58</em> :: ctx MetaHiC-VHDB :: <em>CONTEXT SHIFT</em></span>
+      <span>candidate φ-113 :: propagate <em>FAIL</em> :: annotation incomplete</span>
+      <span>candidate φ-207 :: propagate <b>PASS</b> :: burst=41 :: latency logged</span>
+      <span>leakage control :: holdout=genus-level :: <b>CLEAN</b></span>
+      <span>sweep 042 :: tools=27 :: datasets=2 :: verdict=<b>CONTEXT-DEPENDENT</b></span>
+      <span>candidate φ-221 :: annotate 11/11 genes :: <em>0 tools succeeded</em></span>
+      <span>sweep 043 :: propagation rate <b>5.6%</b> :: creation ≠ validation</span>
+    </div>
+  </div>
+
   <section id="thesis" class="alt">
     <div class="container">
-      <p class="kicker">The Thesis</p>
-      <h2>Creation is scaling. Validation is not.</h2>
-      <p class="lead">
+      <p class="kicker reveal">The Thesis</p>
+      <h2 class="reveal">Creation is scaling. Validation is not.</h2>
+      <p class="lead reveal">
         Generative models can now write whole phage genomes — but in the landmark first effort,
         only a small fraction of AI-generated designs actually replicated. The field can produce
         candidate genomes faster than it can prove they work, and standard annotation tools
         cannot even fully annotate what has been generated.
       </p>
       <div class="grid grid-3" style="margin-top: 34px;">
-        <div class="card">
-          <div class="stat">16 / 285</div>
+        <div class="card reveal">
+          <div class="stat"><span data-count="16">0</span> <small>/ <span data-count="285">0</span></small></div>
           <div class="stat-label">AI-generated phage designs that successfully propagated in the first large-scale demonstration — a screening library, not a solved problem.</div>
         </div>
-        <div class="card">
-          <div class="stat">27</div>
+        <div class="card reveal" style="transition-delay: 0.1s;">
+          <div class="stat"><span data-count="27">0</span></div>
           <div class="stat-label">Phage-host prediction tools benchmarked by PhageHost-Bench across two distinct datasets (RefSeq-VHDB and MetaHiC-VHDB).</div>
         </div>
-        <div class="card">
-          <div class="stat">1</div>
-          <div class="stat-label">Headline finding: prediction performance is highly context-dependent. No single tool wins everywhere — so context-aware validation is the real product.</div>
+        <div class="card reveal" style="transition-delay: 0.2s;">
+          <div class="stat"><span data-count="5.6" data-decimal="1">0</span><small>%</small></div>
+          <div class="stat-label">Propagation rate of generated designs. When creation succeeds this rarely, independent measurement is the product.</div>
         </div>
       </div>
-      <p style="margin-top: 34px; font-size: 1.05rem;">
+      <div class="finding reveal">
+        <b>Headline finding:</b> prediction performance is highly context-dependent — no single
+        tool wins everywhere. That is exactly why context-aware validation is the layer worth owning.
+      </div>
+      <p class="reveal" style="margin-top: 26px; font-size: 1.05rem;">
         In a world where AI can generate infinite biological designs, the bottleneck isn't
         creation — it's validation. Without rigorous benchmarks, AI-designed phages are just
         sequences; without independent evaluation, clinical results are anecdotal; without
@@ -255,18 +317,18 @@
 
   <section id="project">
     <div class="container">
-      <p class="kicker">The Project</p>
-      <h2>What PhageHost-Bench is</h2>
+      <p class="kicker reveal">The Project</p>
+      <h2 class="reveal">What PhageHost-Bench is</h2>
       <div class="grid grid-3" style="margin-top: 30px;">
-        <div class="card">
+        <div class="card reveal">
           <h3>The Benchmark</h3>
           <p>A public, leakage-controlled, multi-pathogen benchmark and leaderboard for phage-host prediction — systematic, reproducible, and context-aware by design.</p>
         </div>
-        <div class="card">
+        <div class="card reveal" style="transition-delay: 0.1s;">
           <h3>The Context-Performance Matrix</h3>
           <p>A published map of which tools work in which scenarios, and the standard evaluation protocol that every new prediction tool must pass.</p>
         </div>
-        <div class="card">
+        <div class="card reveal" style="transition-delay: 0.2s;">
           <h3>The Validation API</h3>
           <p>An open API that lets researchers validate their own predictions against the benchmark — and lets existing platforms integrate phage-specific validation directly.</p>
         </div>
@@ -276,14 +338,14 @@
 
   <section id="focus" class="alt">
     <div class="container">
-      <p class="kicker">Deliberate Focus</p>
-      <h2>What we are not building</h2>
-      <p>
+      <p class="kicker reveal">Deliberate Focus</p>
+      <h2 class="reveal">What we are not building</h2>
+      <p class="reveal">
         Every adjacent vector fails the same way: it builds infrastructure for a future that
         hasn't arrived, in markets that don't yet exist, against incumbents with more resources
         and more validation. So we don't compete with them — we measure their work.
       </p>
-      <table>
+      <table class="reveal">
         <thead>
           <tr>
             <th>The tempting vector</th>
@@ -334,24 +396,32 @@
 
   <section id="approach">
     <div class="container">
-      <p class="kicker">The Approach</p>
-      <h2>Three rings, one monopoly</h2>
-      <p>
+      <p class="kicker reveal">The Approach</p>
+      <h2 class="reveal">Three rings, one monopoly</h2>
+      <p class="reveal">
         The strategy is not to out-build anyone. It is to become the one thing no one else is:
         the rigorous, neutral, context-aware validator of phage-host prediction.
       </p>
+      <div class="rings-wrap reveal" aria-hidden="true">
+        <div class="rings">
+          <div class="ring r1"></div>
+          <div class="ring r2"></div>
+          <div class="ring r3"></div>
+          <div class="core"><b>VALIDATE</b></div>
+        </div>
+      </div>
       <div class="grid grid-3" style="margin-top: 30px;">
-        <div class="card">
+        <div class="card reveal">
           <div class="ring-no">Ring 1 · <span class="ring-time">0–18 months</span></div>
           <h3>The Academic Standard</h3>
           <p>Become the definitive benchmark for phage-host prediction. Publish the Context-Performance Matrix, set the evaluation protocol every new tool must pass, and open the validation API to researchers.</p>
         </div>
-        <div class="card">
+        <div class="card reveal" style="transition-delay: 0.1s;">
           <div class="ring-no">Ring 2 · <span class="ring-time">18–48 months</span></div>
           <h3>The Industrial Validation Layer</h3>
           <p>Partner with one synthetic phage company as their external benchmarking service — not a competitor, an assessor. Use that credibility to become the independent validator others need.</p>
         </div>
-        <div class="card">
+        <div class="card reveal" style="transition-delay: 0.2s;">
           <div class="ring-no">Ring 3 · <span class="ring-time">3–7 years</span></div>
           <h3>The Regulatory Infrastructure</h3>
           <p>Position as the neutral third-party validator for synthetic phage approvals, working with regulators on evaluation standards — the UL Labs of synthetic phage safety.</p>
@@ -362,20 +432,21 @@
 
   <section id="roadmap" class="alt">
     <div class="container">
-      <p class="kicker">The Roadmap</p>
-      <h2>From standard to gatekeeper to infrastructure</h2>
+      <p class="kicker reveal">The Roadmap</p>
+      <h2 class="reveal">From standard to gatekeeper to infrastructure</h2>
+      <div class="timeline reveal" aria-hidden="true"><i></i></div>
       <div class="grid grid-3" style="margin-top: 30px;">
-        <div class="card">
+        <div class="card reveal">
           <div class="ring-no">Phase 1 · <span class="ring-time">2025–2027</span></div>
           <h3>Establish the standard</h3>
           <p>Publish the definitive benchmark comparison, launch the open validation API, and build partnerships with 3–5 synthetic phage groups.</p>
         </div>
-        <div class="card">
+        <div class="card reveal" style="transition-delay: 0.1s;">
           <div class="ring-no">Phase 2 · <span class="ring-time">2027–2029</span></div>
           <h3>Become the gatekeeper</h3>
           <p>Secure regulatory recognition as a validation standard, expand to CRISPR-phage systems, and ship a real-time monitoring dashboard for clinical trials.</p>
         </div>
-        <div class="card">
+        <div class="card reveal" style="transition-delay: 0.2s;">
           <div class="ring-no">Phase 3 · <span class="ring-time">2029–2032</span></div>
           <h3>The infrastructure layer</h3>
           <p>Integrate with major platforms, help establish an international standards body, and license validation technology to pharmaceutical companies.</p>
@@ -386,11 +457,11 @@
 
   <section>
     <div class="container">
-      <blockquote>
+      <blockquote class="reveal">
         PhageHost-Bench is the NIST of synthetic virology — the neutral, rigorous,
         indispensable measurement infrastructure that everyone else builds upon.
       </blockquote>
-      <p>
+      <p class="reveal">
         The question was never "how do we build the future of programmable biology?"
         It is "how do we become the measurement infrastructure every actor in synthetic
         virology must use?" The answer is not to build the future. The answer is to measure it.
@@ -407,5 +478,212 @@
       </span>
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // --- Hero sweep canvas: candidates resolved by the measurement sweep ---
+      var canvas = document.getElementById("sweep");
+      var ctx = canvas.getContext("2d");
+      var hero = document.querySelector(".hero");
+      var particles = [];
+      var sweepX = 0;
+      var sweepCount = 0;
+      var PASS_RATE = 0.056; // 16 / 285
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var W = 0, H = 0, last = 0, holdUntil = 0;
+
+      function resize() {
+        W = hero.clientWidth;
+        H = hero.clientHeight;
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        canvas.style.width = W + "px";
+        canvas.style.height = H + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        seed();
+      }
+
+      function seed() {
+        particles = [];
+        var n = Math.max(120, Math.min(260, Math.floor(W * H / 9000)));
+        for (var i = 0; i < n; i++) {
+          particles.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            r: 1 + Math.random() * 1.8,
+            pass: Math.random() < PASS_RATE,
+            state: 0, // 0 unresolved, 1 pass, 2 fail
+            glow: 0
+          });
+        }
+        sweepX = 0;
+        sweepCount = (sweepCount + 1) % 1000;
+      }
+
+      function draw(now) {
+        var dt = Math.min(0.05, (now - last) / 1000 || 0);
+        last = now;
+        ctx.clearRect(0, 0, W, H);
+
+        ctx.strokeStyle = "rgba(157,180,204,0.05)";
+        ctx.lineWidth = 1;
+        for (var gx = 0; gx < W; gx += 64) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+        for (var gy = 0; gy < H; gy += 64) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+        var speed = W / 7; // one sweep ≈ 7s
+        if (now < holdUntil) {
+          // hold: let results glow, then reset
+        } else {
+          sweepX += speed * dt;
+          if (sweepX > W + 60) { holdUntil = now + 2600; sweepX = -60; }
+        }
+        if (sweepX <= -50 && now >= holdUntil) { seed(); }
+
+        var grad = ctx.createLinearGradient(sweepX - 90, 0, sweepX, 0);
+        grad.addColorStop(0, "rgba(94,234,212,0)");
+        grad.addColorStop(1, "rgba(94,234,212,0.10)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(sweepX - 90, 0, 90, H);
+        ctx.strokeStyle = "rgba(94,234,212,0.75)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(sweepX, 0); ctx.lineTo(sweepX, H); ctx.stroke();
+        ctx.fillStyle = "rgba(94,234,212,0.8)";
+        ctx.font = "10px ui-monospace, Menlo, monospace";
+        var label = "SWEEP " + String(sweepCount).padStart(3, "0");
+        ctx.fillText(label, Math.min(Math.max(sweepX + 6, 4), W - 70), 16);
+
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          if (p.state === 0 && p.x <= sweepX) { p.state = p.pass ? 1 : 2; p.glow = 1; }
+          if (p.glow > 0) p.glow = Math.max(0, p.glow - dt * 0.5);
+          if (p.state === 0) {
+            ctx.fillStyle = "rgba(157,180,204,0.4)";
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.2832); ctx.fill();
+          } else if (p.state === 1) {
+            var a = 0.55 + 0.45 * p.glow;
+            if (p.glow > 0.02) {
+              ctx.fillStyle = "rgba(94,234,212," + (0.16 * p.glow) + ")";
+              ctx.beginPath(); ctx.arc(p.x, p.y, p.r + 9 * p.glow, 0, 6.2832); ctx.fill();
+            }
+            ctx.fillStyle = "rgba(94,234,212," + a + ")";
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r + 0.6, 0, 6.2832); ctx.fill();
+          } else {
+            ctx.fillStyle = "rgba(248,113,113," + (0.14 + 0.2 * p.glow) + ")";
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 0.9, 0, 6.2832); ctx.fill();
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+
+      resize();
+      window.addEventListener("resize", resize);
+      if (!reduced) { requestAnimationFrame(draw); }
+      else { sweepX = W * 2; requestAnimationFrame(function (t) { last = t; draw(t); }); }
+
+      // --- Crosshair measuring reticle ---
+      var chv = document.getElementById("chv");
+      var chh = document.getElementById("chh");
+      var xy = document.getElementById("xy");
+      if (window.matchMedia("(pointer: fine)").matches && !reduced) {
+        hero.addEventListener("mousemove", function (e) {
+          var rect = hero.getBoundingClientRect();
+          var x = e.clientX - rect.left;
+          var y = e.clientY - rect.top;
+          chv.style.left = x + "px";
+          chh.style.top = y + "px";
+          xy.style.left = Math.min(x + 14, rect.width - 190) + "px";
+          xy.style.top = (y + 14) + "px";
+          xy.textContent = "x:" + String(Math.round(x)).padStart(4, "0") +
+            " y:" + String(Math.round(y)).padStart(4, "0") +
+            " :: λ=" + (0.9 + Math.random() * 0.09).toFixed(3) +
+            " :: measuring…";
+        });
+      }
+
+      // --- Rotating hero verb ---
+      var verbs = ["build", "design", "generate", "synthesize"];
+      var vi = 0;
+      var verbEl = document.getElementById("verb");
+      if (!reduced) {
+        setInterval(function () {
+          verbEl.classList.add("swap");
+          setTimeout(function () {
+            vi = (vi + 1) % verbs.length;
+            verbEl.textContent = verbs[vi];
+            verbEl.classList.remove("swap");
+          }, 300);
+        }, 2400);
+      }
+
+      // --- Telemetry line rotation ---
+      var lines = [
+        "sweep 041 :: context=RefSeq-VHDB :: tool-07 AUROC=0.91 :: verdict=PASS",
+        "sweep 041 :: context=MetaHiC-VHDB :: tool-07 AUROC=0.58 :: verdict=CONTEXT SHIFT",
+        "sweep 042 :: candidates=285 :: propagated=16 :: rate=5.6%",
+        "sweep 042 :: leakage-control=genus-holdout :: status=CLEAN",
+        "sweep 043 :: annotate 11 genes :: tools-passing=0 :: flag=UNVALIDATED",
+        "sweep 043 :: tools=27 :: datasets=2 :: verdict=CONTEXT-DEPENDENT"
+      ];
+      var li = 0;
+      var tel = document.getElementById("telemetry-line");
+      if (!reduced) {
+        setInterval(function () {
+          tel.style.opacity = "0";
+          setTimeout(function () {
+            li = (li + 1) % lines.length;
+            tel.textContent = lines[li];
+            tel.style.opacity = "1";
+          }, 320);
+        }, 3000);
+      } else { tel.textContent = lines[2]; }
+
+      // --- Ticker duplication for seamless loop ---
+      var track = document.getElementById("ticker-track");
+      track.innerHTML += track.innerHTML;
+
+      // --- Scroll reveal ---
+      var revealEls = document.querySelectorAll(".reveal");
+      if ("IntersectionObserver" in window && !reduced) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) { en.target.classList.add("visible"); io.unobserve(en.target); }
+          });
+        }, { threshold: 0.15 });
+        revealEls.forEach(function (el) { io.observe(el); });
+      } else {
+        revealEls.forEach(function (el) { el.classList.add("visible"); });
+      }
+
+      // --- Animated counters ---
+      function animateCount(el) {
+        var target = parseFloat(el.getAttribute("data-count"));
+        var dec = parseInt(el.getAttribute("data-decimal") || "0", 10);
+        if (reduced) { el.textContent = target.toFixed(dec); return; }
+        var start = null;
+        var dur = 1400;
+        function step(ts) {
+          if (!start) start = ts;
+          var k = Math.min(1, (ts - start) / dur);
+          var eased = 1 - Math.pow(1 - k, 3);
+          el.textContent = (target * eased).toFixed(dec);
+          if (k < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+      var counters = document.querySelectorAll("[data-count]");
+      if ("IntersectionObserver" in window) {
+        var cio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) { animateCount(en.target); cio.unobserve(en.target); }
+          });
+        }, { threshold: 0.4 });
+        counters.forEach(function (el) { cio.observe(el); });
+      } else {
+        counters.forEach(animateCount);
+      }
+    })();
+  </script>
 </body>
 </html>
